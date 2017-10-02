@@ -17,11 +17,11 @@ liri();
 function liri() {
 	// switch(userChoice) {
 	// 	case 0:
-	// 		userChoice = 'my-tweets';
+	// 		'my-tweets';
 	// 		runTwitter();
 	// 		break;
 	// 	case 1:
-	// 		userChoice = 'spotify-this-song';
+	// 		'spotify-this-song';
 	// 		runSpotify(userReq);
 	// 		break;
 	// 	default: 
@@ -32,7 +32,7 @@ function liri() {
 	}else if (userChoice == 'spotify-this-song') {
 		runSpotify(userReq);
 	}else if (userChoice == 'movie-this') {
-
+		runMovie(userReq);
 	}else if (userChoice == 'do-what-it-says'){
 
 	}else {
@@ -70,7 +70,7 @@ function runTwitter() {
 
 function runSpotify(song) {
 	//node liri.js spotify-this-song '<song name here>'
-	//Shows Artist, Song's name, Preview ling of song, Album song is from
+	//Shows Artist, Song's name, Preview link of song, Album song is from
 	//If no song is provided program will default "The Sign" by Ace of Base
 	var Spotify = require('node-spotify-api');
 	 
@@ -79,20 +79,53 @@ function runSpotify(song) {
 	  secret: spotify_cs
 	});
 	 
-	spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
+	spotify.search({ type: 'track', query: song}, function(err, data) {
 	  if (err) {
 	    return console.log('Error occurred: ' + err);
 	  }
-	 
-	console.log(data); 
+	//Artist
+	console.log("Artist: ", data.tracks.items[0].artists[0].name); 
+	//Song's name
+	console.log("Song: ", data.tracks.items[0].name);
+	//Album song is from
+	console.log("Album: ", data.tracks.items[0].album.name);
+	//Prewview link of song
+	console.log("Preview: ", data.tracks.items[0].artists[0].external_urls);
+
 	});
 }
 
 
-//node liri.js movie-this '<movie name here>'
-//Outputs Title of Movie, Year came out, IMDB rating, Rotten Tomatoes rating, Country prodced, Language, Plot, Actors
-//if the user doesn't type in a movie it will output 'Mr Nobody'
+function runMovie(movie) {
+	//node liri.js movie-this '<movie name here>'
+	//Outputs Title of Movie, Year came out, IMDB rating, Rotten Tomatoes rating, Country prodced, Language, Plot, Actors
+	//if the user doesn't type in a movie it will output 'Mr Nobody'
+	var request = require("request");
+	var movie = movie.split(' ').join('&');
+	//var data = JSON.parse(body);
+	var queryUrl = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=" + omdb_ck;
 
+	console.log(queryUrl);
+
+	request(queryUrl, function(error, response, body) {
+
+	  if (!error && response.statusCode === 200) {
+	  	console.log("Title: " + JSON.parse(body).Title);
+	    console.log("Release Year: " + JSON.parse(body).Year);
+	    console.log("Actors: " + JSON.parse(body).Actors);
+	    console.log("IMDB Rating: " +  JSON.parse(body).imdbRating);
+	    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+	    console.log("Country Produced: " +  JSON.parse(body).Country);
+	    console.log("Language: " + JSON.parse(body).Language);
+	    console.log("Plot: " + JSON.parse(body).Plot);
+	    
+	  }else {
+	  	movie = "Mr.Nobody";
+	  	console.log("Mr.Nobody");
+	  }
+	});
+
+}
 
 // var request = require('request');
 // request('http://www.google.com', function (error, response, body) {
