@@ -15,29 +15,31 @@ var omdb_ck = keys.moviedbKey.consumer_key;
 liri();
 
 function liri() {
-	// switch(userChoice) {
-	// 	case 0:
-	// 		'my-tweets';
-	// 		runTwitter();
-	// 		break;
-	// 	case 1:
-	// 		'spotify-this-song';
-	// 		runSpotify(userReq);
-	// 		break;
-	// 	default: 
-	// 		console.log("Invalid!");
-	// }
-	if (userChoice == 'my-tweets') {
-		runTwitter();
-	}else if (userChoice == 'spotify-this-song') {
-		runSpotify(userReq);
-	}else if (userChoice == 'movie-this') {
-		runMovie(userReq);
-	}else if (userChoice == 'do-what-it-says'){
-
-	}else {
-		console.log("Invalid!");
+	switch(userChoice) {
+		case 'my-tweets':
+			runTwitter();
+			break;
+		case 'spotify-this-song':
+			if(userReq == null){
+				runSpotify('The Sign')
+			}else{
+				runSpotify(userReq);
+			}
+			break;
+		case 'movie-this':
+			if(userReq == null){
+				runMovie('Mr.Nobody');
+			}else{
+				runMovie(userReq);
+			}
+		case 'do-what-it-says':
+			console.log("in do-what-it-says");
+			runRandom();
+		default: 
+			console.log("default");
+			console.log("Invalid! try one of these use inquirer");
 	}
+
 	// liri();
 }
 
@@ -101,7 +103,7 @@ function runMovie(movie) {
 	//Outputs Title of Movie, Year came out, IMDB rating, Rotten Tomatoes rating, Country prodced, Language, Plot, Actors
 	//if the user doesn't type in a movie it will output 'Mr Nobody'
 	var request = require("request");
-	var movie = movie.split(' ').join('&');
+	//var movie = movie.split(' ').join('&');
 	//var data = JSON.parse(body);
 	var queryUrl = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=" + omdb_ck;
 
@@ -109,33 +111,65 @@ function runMovie(movie) {
 
 	request(queryUrl, function(error, response, body) {
 
-	  if (!error && response.statusCode === 200) {
-	  	console.log("Title: " + JSON.parse(body).Title);
-	    console.log("Release Year: " + JSON.parse(body).Year);
-	    console.log("Actors: " + JSON.parse(body).Actors);
-	    console.log("IMDB Rating: " +  JSON.parse(body).imdbRating);
-	    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
-	    console.log("Country Produced: " +  JSON.parse(body).Country);
-	    console.log("Language: " + JSON.parse(body).Language);
-	    console.log("Plot: " + JSON.parse(body).Plot);
-	    
+	  if (!error && response.statusCode === 200){
+	  	var data = JSON.parse(body);
+	  	console.log("Title: " + data.Title);
+	    console.log("Release Year: " + data.Year);
+	    console.log("Actors: " + data.Actors);
+	    console.log("IMDB Rating: " +  data.imdbRating);
+	    console.log("Rotten Tomatoes Rating: " + data.Ratings[1].Value);
+	    console.log("Country Produced: " +  data.Country);
+	    console.log("Language: " + data.Language);
+	    console.log("Plot: " + data.Plot);
 	  }else {
-	  	movie = "Mr.Nobody";
-	  	console.log("Mr.Nobody");
+	  	console.error('An error occured!');
 	  }
 	});
 
 }
 
-// var request = require('request');
-// request('http://www.google.com', function (error, response, body) {
-//   console.log('error:', error); // Print the error if one occurred
-//   console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-//   console.log('body:', body); // Print the HTML for the Google homepage.
-// });
 
-//node liri.js do-what-it-says
-//Liri will take text in random.txt; should run spotify-this-song "I want it that way"
+function runRandom() {
+	//node liri.js do-what-it-says
+	//Liri will take text in random.txt; should run spotify-this-song "I want it that way"
+	var fs = require('fs');
+
+	fs.readFile("random.txt", "utf8", function(error,data) {
+		if(error) {
+			return console.log(error);
+		}
+		console.log("string: ", data);
+
+		var dataArr = data.split(",");
+
+		console.log("split: ", dataArr);
+
+		var comm = dataArr[0];
+		var req = dataArr[1];
+
+		console.log("command ", comm);
+		console.log("request ", req);
+
+		switch(comm) {
+			case 'my-tweets':
+				runTwitter();
+				break;
+			case 'spotify-this-song':
+					runSpotify(req);
+				break;
+			case 'movie-this':
+				if(userReq == null){
+					runMovie('Mr.Nobody');
+				}else{
+					runMovie(req);
+				}
+				break;
+			default: 
+				console.log("Invalid! try one of these use inquirer");
+				break;
+		}
+	});
+}
 
 //Bonus: log.txt file, append check command you run to log.txt
 
