@@ -32,12 +32,14 @@ function liri(userChoice, userReq) {
 			}else{
 				runMovie(userReq);
 			}
+			break;
 		case 'do-what-it-says':
-			console.log("in do-what-it-says");
+			//console.log("in do-what-it-says");
 			runRandom();
+			break;
 		default: 
-			console.log("default");
-			console.log("Invalid! try one of these use inquirer");
+			//console.log("default");
+			console.log("Invalid! try one of these my-tweets, spotify-this-song <song-choice>, movie-this <movie-choice>, do-what-it-says");
 	}
 
 	// liri();
@@ -138,19 +140,23 @@ function runRandom() {
 		if(error) {
 			return console.log(error);
 		}
-		console.log("string: ", data);
+		//console.log("string: ", data);
 
 		var dataArr = data.split(",");
 
-		console.log("split: ", dataArr);
+		//console.log("split: ", dataArr);
 
 		var comm = dataArr[0];
 		var req = dataArr[1];
 
-		console.log("command ", comm);
-		console.log("request ", req);
-
-		//liri(comm, req);
+		//console.log("command ", comm);
+		//console.log("request ", req);
+		if(comm != 'do-what-it-says') {
+			liri(comm, req);
+		}else{
+			console.log("Invalid! try one of these my-tweets, spotify-this-song <song-choice>, movie-this <movie-choice>, do-what-it-says");
+		}
+		
 	});
 }
 
