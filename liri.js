@@ -12,9 +12,9 @@ var omdb_ck = keys.moviedbKey.consumer_key;
 
 
 //Make it so Liri can take in one of the following commands: my-tweets, spotify-this-song, movie-this or do-what-it-says
-liri();
+liri(userChoice, userReq);
 
-function liri() {
+function liri(userChoice, userReq) {
 	switch(userChoice) {
 		case 'my-tweets':
 			runTwitter();
@@ -107,7 +107,7 @@ function runMovie(movie) {
 	//var data = JSON.parse(body);
 	var queryUrl = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=" + omdb_ck;
 
-	console.log(queryUrl);
+	//console.log(queryUrl);
 
 	request(queryUrl, function(error, response, body) {
 
@@ -150,24 +150,7 @@ function runRandom() {
 		console.log("command ", comm);
 		console.log("request ", req);
 
-		switch(comm) {
-			case 'my-tweets':
-				runTwitter();
-				break;
-			case 'spotify-this-song':
-					runSpotify(req);
-				break;
-			case 'movie-this':
-				if(userReq == null){
-					runMovie('Mr.Nobody');
-				}else{
-					runMovie(req);
-				}
-				break;
-			default: 
-				console.log("Invalid! try one of these use inquirer");
-				break;
-		}
+		//liri(comm, req);
 	});
 }
 
